@@ -24,6 +24,8 @@ backend/**/*.suo
 **/appsettings.*.local.json
 **/.env
 **/.env.local
+android/app/google-services.json
+android/local.properties
 
 # OS
 .DS_Store

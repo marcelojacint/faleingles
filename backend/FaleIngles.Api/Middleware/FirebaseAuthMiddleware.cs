@@ -8,7 +8,7 @@ public sealed class FirebaseAuthMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<FirebaseAuthMiddleware> _logger;
     private readonly HttpClient _httpClient;
-    private readonly string _projectId;
+    private readonly string _apiKey;
 
     private static readonly HashSet<string> AnonymousEndpoints = new()
     {
@@ -26,7 +26,7 @@ public sealed class FirebaseAuthMiddleware
         _next = next;
         _logger = logger;
         _httpClient = httpClientFactory.CreateClient();
-        _projectId = configuration["Firebase:ProjectId"] ?? string.Empty;
+        _apiKey = configuration["Firebase:ApiKey"] ?? string.Empty;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -71,7 +71,7 @@ public sealed class FirebaseAuthMiddleware
     {
         try
         {
-            var url = $"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={_projectId}";
+            var url = $"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={_apiKey}";
             var payload = JsonSerializer.Serialize(new { idToken });
             var content = new StringContent(payload, System.Text.Encoding.UTF8, "application/json");
 
