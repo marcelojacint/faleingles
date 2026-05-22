@@ -107,7 +107,7 @@ private fun StreakCard(streak: Int, todayMinutes: Int, goalMinutes: Int) {
                 Text(
                     "$todayMinutes / $goalMinutes min hoje",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
                 )
             }
             Text("🔥", style = MaterialTheme.typography.displayMedium)
@@ -165,7 +165,7 @@ private fun LessonCard(lesson: Lesson, onClick: () -> Unit) {
                 Text(
                     lesson.situationContext,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

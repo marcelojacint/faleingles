@@ -112,7 +112,7 @@ private fun PhraseCounter(state: AudioUiState) {
         Text(
             state.lessonTitle,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f),
         )
     }
 }

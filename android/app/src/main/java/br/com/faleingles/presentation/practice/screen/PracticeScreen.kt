@@ -201,7 +201,7 @@ private fun AnswerSlots(
                 Text(
                     "Toque nas palavras abaixo para montar a frase",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
                     textAlign = TextAlign.Center,
                 )
             } else {
@@ -286,11 +286,11 @@ private fun WordBank(
         Text(
             "Palavras disponíveis",
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
         )
         Card(
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f),
             ),
         ) {
             FlowRow(
@@ -384,7 +384,7 @@ private fun PracticeFinishScreen(correct: Int, total: Int, onFinish: () -> Unit)
         Text(
             "$correct de $total frases corretas ($pct%)",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f),
         )
         Spacer(Modifier.height(32.dp))
         Button(

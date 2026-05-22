@@ -55,7 +55,7 @@ fun AuthScreen(
             Text(
                 if (isSignUp) "Crie sua conta gratuita" else "Bem-vindo de volta",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f),
             )
         }
 
@@ -80,7 +80,7 @@ fun AuthScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             HorizontalDivider(modifier = Modifier.weight(1f))
-            Text("ou", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
+            Text("ou", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f))
             HorizontalDivider(modifier = Modifier.weight(1f))
         }
 

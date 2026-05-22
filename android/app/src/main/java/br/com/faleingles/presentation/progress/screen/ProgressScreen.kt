@@ -114,7 +114,7 @@ private fun StatCard(emoji: String, value: String, label: String, modifier: Modi
         ) {
             Text(emoji, style = MaterialTheme.typography.titleLarge)
             Text(value, style = MaterialTheme.typography.displayMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize), color = MaterialTheme.colorScheme.primary)
-            Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f), textAlign = TextAlign.Center)
+            Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f), textAlign = TextAlign.Center)
         }
     }
 }
@@ -163,7 +163,7 @@ private fun PhaseCard(phase: PhaseProgress) {
                     }
                     Column {
                         Text("Fase ${phase.phase}", style = MaterialTheme.typography.titleMedium)
-                        Text(phaseNames[phase.phase] ?: "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                        Text(phaseNames[phase.phase] ?: "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f))
                     }
                 }
                 if (phase.totalLessons > 0) {
@@ -186,7 +186,7 @@ private fun PhaseCard(phase: PhaseProgress) {
                 Text(
                     "Em breve",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
                 )
             }
         }

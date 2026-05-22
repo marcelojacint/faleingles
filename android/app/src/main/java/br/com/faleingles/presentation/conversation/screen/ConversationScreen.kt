@@ -142,7 +142,7 @@ private fun MessageBubble(message: ConversationMessage) {
                         Text(
                             correction.explanation,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f),
                         )
                     }
                 }

@@ -185,7 +185,7 @@ private fun PhraseCard(
                 Text(
                     text = phrase.words.joinToString(" ") { it.translation },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                 )
             }
 
@@ -263,7 +263,7 @@ private fun WordDetailCard(word: Word) {
             Text(
                 text = word.roleInPhrase,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f),
             )
         }
     }

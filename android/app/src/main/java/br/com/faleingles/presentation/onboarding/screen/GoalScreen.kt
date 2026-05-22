@@ -47,7 +47,7 @@ fun GoalScreen(
             text = "Consistência importa mais que intensidade.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f),
         )
         Spacer(Modifier.height(40.dp))
 
@@ -85,7 +85,7 @@ fun GoalScreen(
                     Text(
                         text = option.description,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                     )
                 }
             }

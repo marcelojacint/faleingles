@@ -79,7 +79,7 @@ private fun ReviewContent(state: ReviewUiState, viewModel: ReviewViewModel) {
                 Text(
                     card.lessonTitle,
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f),
                 )
             }
 
@@ -130,13 +130,13 @@ private fun ReviewContent(state: ReviewUiState, viewModel: ReviewViewModel) {
                         Text(
                             card.phrase.negative,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
                             textAlign = TextAlign.Center,
                         )
                         Text(
                             card.phrase.interrogative,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
                             textAlign = TextAlign.Center,
                         )
                     }
@@ -238,7 +238,7 @@ private fun EmptyState(onBack: () -> Unit) {
         Spacer(Modifier.height(16.dp))
         Text("Nada para revisar hoje!", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
         Spacer(Modifier.height(8.dp))
-        Text("Continue estudando novas lições.", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+        Text("Continue estudando novas lições.", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f))
         Spacer(Modifier.height(32.dp))
         Button(onClick = onBack, modifier = Modifier.fillMaxWidth().height(52.dp)) { Text("Voltar") }
     }
