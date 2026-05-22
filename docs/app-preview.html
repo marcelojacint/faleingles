@@ -821,7 +821,7 @@
                 <span class="word-chip" onclick="selectWord(this, 'single', 'único / cada', 'adjective', 'Reforça \'every\' para ênfase')">single</span>
                 <span class="word-chip" onclick="selectWord(this, 'day', 'dia', 'noun', 'Complemento de tempo')">day</span>
               </div>
-              <button class="icon-btn" style="flex-shrink: 0;" onclick="alert('🔊 Reproduzindo áudio...')">🔊</button>
+              <button class="icon-btn" style="flex-shrink: 0;" onclick="speak('He is coding every single day.', 1)">🔊</button>
             </div>
 
             <div id="translation-area" style="margin-top: 12px; display: none;">
@@ -1123,51 +1123,179 @@
     }
   }
 
-  // ── Audio Screen ──
-  let audioPlaying = false;
-  let audioTimer = null;
+  // ── Text-to-Speech (Web Speech API) ──
+  const audioPhrases = [
+    'He is coding every single day.',
+    'She is my friend.',
+    'I am from Brazil.',
+  ];
+  let audioPhraseIdx = 0;
+  let currentSpeed = 1;
+  let currentUtterance = null;
 
-  function playNative() {
-    if (audioPlaying) return;
-    audioPlaying = true;
-    const btn = document.getElementById('play-native-btn');
-    btn.textContent = '⏸';
-    let pct = 0;
-    audioTimer = setInterval(() => {
-      pct += 5;
-      document.getElementById('audio-bar').style.width = pct + '%';
-      if (pct >= 100) {
-        clearInterval(audioTimer);
-        audioPlaying = false;
-        btn.textContent = '▶';
-        document.getElementById('audio-bar').style.width = '0%';
-      }
-    }, 100);
+  function speak(text, rate, onStart, onEnd) {
+    if (!window.speechSynthesis) { onEnd && onEnd(); return; }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.rate = rate || 1;
+    // Prefer a native English voice
+    const voices = speechSynthesis.getVoices();
+    const enVoice = voices.find(v => v.lang.startsWith('en') && !v.localService) ||
+                    voices.find(v => v.lang.startsWith('en')) || null;
+    if (enVoice) utter.voice = enVoice;
+    utter.onstart = onStart;
+    utter.onend = onEnd;
+    utter.onerror = onEnd;
+    currentUtterance = utter;
+    window.speechSynthesis.speak(utter);
   }
 
-  function setSpeed(el, label) {
+  // ── Audio Screen ──
+  let audioPlaying = false;
+  let audioBarInterval = null;
+
+  function playNative() {
+    const btn = document.getElementById('play-native-btn');
+    if (audioPlaying) {
+      window.speechSynthesis.cancel();
+      audioPlaying = false;
+      btn.textContent = '▶';
+      clearInterval(audioBarInterval);
+      document.getElementById('audio-bar').style.width = '0%';
+      return;
+    }
+
+    const phrase = audioPhrases[audioPhraseIdx % audioPhrases.length];
+    btn.textContent = '⏸';
+
+    // Animate progress bar in sync with estimated speech duration
+    const estDuration = (phrase.split(' ').length * 420) / currentSpeed;
+    let elapsed = 0;
+    clearInterval(audioBarInterval);
+    audioBarInterval = setInterval(() => {
+      elapsed += 80;
+      document.getElementById('audio-bar').style.width = Math.min(100, (elapsed / estDuration) * 100) + '%';
+    }, 80);
+
+    speak(
+      phrase,
+      currentSpeed,
+      () => { audioPlaying = true; },
+      () => {
+        audioPlaying = false;
+        btn.textContent = '▶';
+        clearInterval(audioBarInterval);
+        document.getElementById('audio-bar').style.width = '0%';
+      }
+    );
+  }
+
+  // Trigger voice list load (Chrome requires user gesture first)
+  if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    speechSynthesis.getVoices();
+  }
+
+  function setSpeed(el, speedLabel) {
     document.querySelectorAll('.speed-chip').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
+    currentSpeed = parseFloat(speedLabel);
   }
 
   let isRecording = false;
-  let recTimer = null;
+  let recognition = null;
+  let lastTranscript = '';
 
   function toggleRec() {
     const btn = document.getElementById('rec-btn');
     const label = document.getElementById('rec-label');
-    if (!isRecording) {
+
+    if (isRecording) {
+      recognition && recognition.stop();
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      label.textContent = 'Navegador não suporta gravação 😕';
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
       isRecording = true;
       btn.className = 'rec-btn recording';
       btn.textContent = '⏹';
-      label.textContent = 'Gravando...';
-    } else {
+      label.textContent = 'Gravando... fale em inglês!';
+    };
+
+    recognition.onresult = (e) => {
+      lastTranscript = e.results[0][0].transcript;
+    };
+
+    recognition.onend = () => {
       isRecording = false;
       btn.className = 'rec-btn idle';
       btn.textContent = '🎤';
-      label.textContent = 'Gravação pronta!';
-      document.getElementById('play-rec-btn').style.display = '';
+
+      if (lastTranscript) {
+        label.textContent = `Você disse: "${lastTranscript}"`;
+        document.getElementById('play-rec-btn').style.display = '';
+        document.getElementById('play-rec-btn').onclick = () => speak(lastTranscript, 1);
+        showPronunciationFeedback(lastTranscript);
+      } else {
+        label.textContent = 'Não ouvi nada. Tente novamente.';
+      }
+    };
+
+    recognition.onerror = (e) => {
+      isRecording = false;
+      btn.className = 'rec-btn idle';
+      btn.textContent = '🎤';
+      label.textContent = e.error === 'not-allowed'
+        ? 'Permissão de microfone negada 🎙️'
+        : 'Erro ao gravar. Tente novamente.';
+    };
+
+    recognition.start();
+  }
+
+  function showPronunciationFeedback(transcript) {
+    const target = audioPhrases[audioPhraseIdx % audioPhrases.length];
+    const normalize = s => s.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+    const match = normalize(transcript) === normalize(target);
+    const similarity = calcSimilarity(normalize(transcript), normalize(target));
+    const score = Math.round(similarity * 100);
+
+    // Remove old feedback if any
+    const old = document.getElementById('pronunciation-feedback');
+    if (old) old.remove();
+
+    const fb = document.createElement('div');
+    fb.id = 'pronunciation-feedback';
+    fb.style.cssText = `border-radius:12px; padding:12px 14px; margin-top:8px; font-size:13px; line-height:1.5;
+      background:${score >= 80 ? 'var(--secondary-container)' : 'var(--error-container)'};
+      color:${score >= 80 ? '#006644' : '#900'};`;
+    fb.innerHTML = `<strong>${score >= 80 ? '✅' : '🔄'} Similaridade: ${score}%</strong><br>
+      Alvo: <em>${target}</em><br>
+      ${score >= 80 ? 'Ótima pronúncia! 🎉' : 'Continue praticando — ouça e repita!'}`;
+    document.getElementById('rec-card').appendChild(fb);
+  }
+
+  function calcSimilarity(a, b) {
+    const longer = a.length > b.length ? a : b;
+    const shorter = a.length > b.length ? b : a;
+    if (longer.length === 0) return 1;
+    let matches = 0;
+    for (let i = 0; i < shorter.length; i++) {
+      if (longer.includes(shorter[i])) matches++;
     }
+    return matches / longer.length;
   }
 
   // ── Review Screen ──
