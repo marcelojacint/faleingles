@@ -2,7 +2,9 @@ package br.com.faleingles.presentation.practice.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.faleingles.domain.model.PracticeResult as DomainPracticeResult
 import br.com.faleingles.domain.repository.LessonRepository
+import br.com.faleingles.domain.repository.ProgressRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +33,7 @@ data class PracticeUiState(
 )
 
 data class Exercise(
+    val phraseId: String,
     val phrase: String,
     val words: List<String>,
     val distractors: List<String>,
@@ -39,7 +42,10 @@ data class Exercise(
 @HiltViewModel
 class PracticeViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
+    private val progressRepository: ProgressRepository,
 ) : ViewModel() {
+
+    private var currentLessonId: String = ""
 
     private val _uiState = MutableStateFlow(PracticeUiState())
     val uiState: StateFlow<PracticeUiState> = _uiState.asStateFlow()
@@ -48,14 +54,15 @@ class PracticeViewModel @Inject constructor(
     private var wordIdCounter = 0
 
     fun loadLesson(lessonId: String) {
+        currentLessonId = lessonId
         viewModelScope.launch {
             val lesson = lessonRepository.getLessonById(lessonId)
             if (lesson == null) return@launch
 
             exercises = lesson.phrases.map { phrase ->
-                val words = phrase.affirmative.trimEnd('.').split(" ")
+                val words = phrase.affirmative.trimEnd('.', '?', '!').split(" ")
                 val distractors = generateDistractors(words)
-                Exercise(phrase.affirmative, words, distractors)
+                Exercise(phrase.id, phrase.affirmative, words, distractors)
             }
 
             _uiState.update {
@@ -130,16 +137,40 @@ class PracticeViewModel @Inject constructor(
         val correct = exercises[state.currentExerciseIndex].words
 
         val isCorrect = answer == correct
+        val exercise = exercises[state.currentExerciseIndex]
+
         _uiState.update {
             it.copy(
                 result = if (isCorrect) PracticeResult.CORRECT else PracticeResult.WRONG,
                 correctCount = if (isCorrect) it.correctCount + 1 else it.correctCount,
             )
         }
+
+        // Persist to SRS
+        viewModelScope.launch {
+            val phraseId = exercise.phraseId
+            if (phraseId.isNotBlank()) {
+                progressRepository.recordPracticeResult(
+                    DomainPracticeResult(
+                        phraseId = phraseId,
+                        isCorrect = isCorrect,
+                        timeTakenMillis = 0L,
+                        nextReviewDate = 0L,
+                        easeFactor = if (isCorrect) 2.5f else 1.3f,
+                    )
+                )
+            }
+        }
     }
 
     fun nextExercise() {
-        val next = _uiState.value.currentExerciseIndex + 1
+        val state = _uiState.value
+        val next = state.currentExerciseIndex + 1
+        if (next >= exercises.size && currentLessonId.isNotBlank()) {
+            viewModelScope.launch {
+                progressRepository.completeLesson(currentLessonId)
+            }
+        }
         loadExercise(next)
     }
 
