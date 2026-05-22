@@ -159,6 +159,151 @@ public static class LessonSeeder
             }
         ));
 
+        // ── FASE 1 — Continuação ──────────────────────────────────────────
+
+        lessons.Add(CreateLesson(
+            phase: 1, order: 5,
+            title: "What do you do?",
+            context: "Alguém te pergunta sua profissão num evento de networking",
+            isPremium: true,
+            phrases: new[]
+            {
+                CreatePhrase("I am a software developer.", "I am not a software developer.", "Are you a software developer?",
+                    new[] {
+                        ("I", "Eu", GrammaticalType.Subject, "Sujeito da frase"),
+                        ("am", "sou", GrammaticalType.Verb, "Verbo to be — profissão/identidade"),
+                        ("a", "um", GrammaticalType.Article, "Artigo indefinido antes de consoante"),
+                        ("software", "software", GrammaticalType.Adjective, "Adjetivo que qualifica o substantivo"),
+                        ("developer", "desenvolvedor", GrammaticalType.Object, "Profissão — substantivo"),
+                    }),
+                CreatePhrase("She is a teacher.", "She is not a teacher.", "Is she a teacher?",
+                    new[] {
+                        ("She", "Ela", GrammaticalType.Pronoun, "Pronome pessoal feminino"),
+                        ("is", "é", GrammaticalType.Verb, "Verbo to be — 3ª pessoa"),
+                        ("a", "uma", GrammaticalType.Article, "Artigo indefinido"),
+                        ("teacher", "professora", GrammaticalType.Object, "Profissão"),
+                    }),
+                CreatePhrase("They are doctors.", "They are not doctors.", "Are they doctors?",
+                    new[] {
+                        ("They", "Eles / Elas", GrammaticalType.Pronoun, "Pronome pessoal plural"),
+                        ("are", "são", GrammaticalType.Verb, "Verbo to be — plural"),
+                        ("doctors", "médicos", GrammaticalType.Object, "Plural sem artigo — profissão geral"),
+                    }),
+            }
+        ));
+
+        lessons.Add(CreateLesson(
+            phase: 1, order: 6,
+            title: "Describing places",
+            context: "Você descreve sua cidade para um estrangeiro",
+            isPremium: true,
+            phrases: new[]
+            {
+                CreatePhrase("The city is very big.", "The city is not very big.", "Is the city very big?",
+                    new[] {
+                        ("The", "A", GrammaticalType.Article, "Artigo definido — cidade específica"),
+                        ("city", "cidade", GrammaticalType.Subject, "Substantivo — lugar"),
+                        ("is", "é", GrammaticalType.Verb, "Verbo to be — característica permanente"),
+                        ("very", "muito", GrammaticalType.Adverb, "Advérbio de intensidade"),
+                        ("big", "grande", GrammaticalType.Adjective, "Adjetivo — tamanho"),
+                    }),
+                CreatePhrase("The streets are clean.", "The streets are not clean.", "Are the streets clean?",
+                    new[] {
+                        ("The", "As", GrammaticalType.Article, "Artigo definido plural"),
+                        ("streets", "ruas", GrammaticalType.Subject, "Substantivo plural"),
+                        ("are", "são / estão", GrammaticalType.Verb, "Verbo to be plural"),
+                        ("clean", "limpas", GrammaticalType.Adjective, "Adjetivo — estado"),
+                    }),
+                CreatePhrase("It is a beautiful country.", "It is not a beautiful country.", "Is it a beautiful country?",
+                    new[] {
+                        ("It", "É / Ele / Ela", GrammaticalType.Pronoun, "Pronome neutro — coisas e lugares"),
+                        ("is", "é", GrammaticalType.Verb, "Verbo to be"),
+                        ("a", "um", GrammaticalType.Article, "Artigo indefinido"),
+                        ("beautiful", "bonito", GrammaticalType.Adjective, "Adjetivo antes do substantivo"),
+                        ("country", "país", GrammaticalType.Object, "Substantivo"),
+                    }),
+            }
+        ));
+
+        // ── FASE 2 — Continuação ──────────────────────────────────────────
+
+        lessons.Add(CreateLesson(
+            phase: 2, order: 2,
+            title: "Do you have...?",
+            context: "Fazendo compras num mercado americano",
+            isPremium: true,
+            phrases: new[]
+            {
+                CreatePhrase("Do you have any bread?", "I do not have any bread.", "Do you have any bread?",
+                    new[] {
+                        ("Do", "Faz / Tem", GrammaticalType.Auxiliary, "Auxiliar para perguntas no presente simples"),
+                        ("you", "você", GrammaticalType.Subject, "Sujeito da pergunta"),
+                        ("have", "ter", GrammaticalType.Verb, "Verbo principal — posse"),
+                        ("any", "algum / qualquer", GrammaticalType.Adjective, "Usado em perguntas e negativas"),
+                        ("bread", "pão", GrammaticalType.Object, "Substantivo incontável"),
+                    }),
+                CreatePhrase("There is not enough time.", "There is enough time.", "Is there enough time?",
+                    new[] {
+                        ("There", "Há / Existe", GrammaticalType.Subject, "Pronome expletivo"),
+                        ("is", "é / está / há", GrammaticalType.Verb, "Verbo to be — existência"),
+                        ("not", "não", GrammaticalType.Adverb, "Negação — antes do complemento"),
+                        ("enough", "suficiente", GrammaticalType.Adjective, "Quantidade adequada"),
+                        ("time", "tempo", GrammaticalType.Object, "Substantivo incontável"),
+                    }),
+            }
+        ));
+
+        lessons.Add(CreateLesson(
+            phase: 2, order: 3,
+            title: "I'm gonna...",
+            context: "Falando sobre planos informais com amigos",
+            isPremium: true,
+            phrases: new[]
+            {
+                CreatePhrase("I'm gonna study English tonight.", "I'm not gonna study tonight.", "Are you gonna study tonight?",
+                    new[] {
+                        ("I'm", "Eu vou", GrammaticalType.Subject, "Contração de I am — início informal"),
+                        ("gonna", "vou / vamos", GrammaticalType.Auxiliary, "Forma coloquial de 'going to' — futuro informal"),
+                        ("study", "estudar", GrammaticalType.Verb, "Verbo no infinitivo após gonna"),
+                        ("English", "inglês", GrammaticalType.Object, "Objeto direto"),
+                        ("tonight", "hoje à noite", GrammaticalType.Adverb, "Advérbio de tempo"),
+                    }),
+                CreatePhrase("She's gonna call you later.", "She's not gonna call you.", "Is she gonna call me?",
+                    new[] {
+                        ("She's", "Ela vai", GrammaticalType.Subject, "Contração de She is"),
+                        ("gonna", "vou / vai", GrammaticalType.Auxiliary, "Futuro informal"),
+                        ("call", "ligar", GrammaticalType.Verb, "Verbo principal"),
+                        ("you", "você", GrammaticalType.Object, "Pronome objeto"),
+                        ("later", "mais tarde", GrammaticalType.Adverb, "Advérbio de tempo"),
+                    }),
+            }
+        ));
+
+        lessons.Add(CreateLesson(
+            phase: 2, order: 4,
+            title: "I really like it",
+            context: "Expressando preferências sobre comida num restaurante",
+            isPremium: true,
+            phrases: new[]
+            {
+                CreatePhrase("I really like Brazilian food.", "I don't really like it.", "Do you like Brazilian food?",
+                    new[] {
+                        ("I", "Eu", GrammaticalType.Subject, "Sujeito"),
+                        ("really", "realmente / muito", GrammaticalType.Adverb, "Intensificador informal — mais forte que 'very'"),
+                        ("like", "gostar de", GrammaticalType.Verb, "Verbo de preferência — presente simples"),
+                        ("Brazilian", "brasileiro", GrammaticalType.Adjective, "Adjetivo de origem — maiúsculo em inglês"),
+                        ("food", "comida", GrammaticalType.Object, "Substantivo incontável"),
+                    }),
+                CreatePhrase("This coffee tastes amazing.", "This coffee does not taste amazing.", "Does this coffee taste amazing?",
+                    new[] {
+                        ("This", "Este / Esse", GrammaticalType.Adjective, "Pronome demonstrativo — objeto próximo"),
+                        ("coffee", "café", GrammaticalType.Subject, "Substantivo — objeto sendo descrito"),
+                        ("tastes", "tem gosto de / sabe a", GrammaticalType.Verb, "Verbo sensorial — 3ª pessoa"),
+                        ("amazing", "incrível", GrammaticalType.Adjective, "Adjetivo de qualidade — posição após verbo sensorial"),
+                    }),
+            }
+        ));
+
         return lessons;
     }
 
