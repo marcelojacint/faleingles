@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="FaleIngles.Api/FaleIngles.Api.csproj" />
+  <Project Path="FaleIngles.Application/FaleIngles.Application.csproj" />
+  <Project Path="FaleIngles.Domain/FaleIngles.Domain.csproj" />
+  <Project Path="FaleIngles.Infrastructure/FaleIngles.Infrastructure.csproj" />
+</Solution>
