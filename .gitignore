@@ -1,0 +1,36 @@
+# Android
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+android/**/*.apk
+android/**/*.aab
+android/**/*.ap_
+android/**/*.dex
+android/.idea/
+android/captures/
+android/.externalNativeBuild/
+android/.cxx/
+
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/.vs/
+backend/**/*.suo
+*.DotSettings.user
+
+# Secrets — nunca comitar
+**/appsettings.*.local.json
+**/.env
+**/.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
