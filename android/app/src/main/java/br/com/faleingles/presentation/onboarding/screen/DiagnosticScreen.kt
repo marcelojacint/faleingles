@@ -8,29 +8,50 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.faleingles.presentation.onboarding.viewmodel.OnboardingViewModel
 
 private data class DiagnosticQuestion(val question: String, val options: List<String>)
 
 private val questions = listOf(
     DiagnosticQuestion(
         "Qual dessas frases você entende sem tradução?",
-        listOf("Nenhuma delas", "\"Hello, how are you?\"", "\"I'm going to the store later\"", "\"Why is everybody so upset about this?\""),
+        listOf(
+            "Nenhuma delas",
+            "\"Hello, how are you?\"",
+            "\"I'm going to the store later\"",
+            "\"Why is everybody so upset about this?\"",
+        ),
     ),
     DiagnosticQuestion(
         "Você consegue responder se alguém te perguntar \"Where are you from?\"?",
-        listOf("Não entendo a pergunta", "Entendo, mas não sei responder", "Consigo responder com dificuldade", "Respondo naturalmente"),
+        listOf(
+            "Não entendo a pergunta",
+            "Entendo, mas não sei responder",
+            "Consigo responder com dificuldade",
+            "Respondo naturalmente",
+        ),
     ),
     DiagnosticQuestion(
         "Qual é o seu objetivo com inglês?",
-        listOf("Entender filmes e séries", "Trabalhar com empresa estrangeira", "Viajar ao exterior", "Me comunicar no dia a dia"),
+        listOf(
+            "Entender filmes e séries",
+            "Trabalhar com empresa estrangeira",
+            "Viajar ao exterior",
+            "Me comunicar no dia a dia",
+        ),
     ),
 )
 
 @Composable
-fun DiagnosticScreen(onContinue: () -> Unit) {
+fun DiagnosticScreen(
+    onContinue: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     var currentQuestion by remember { mutableIntStateOf(0) }
     var selectedOption by remember { mutableStateOf<Int?>(null) }
-    val answers = remember { mutableStateListOf<Int>() }
 
     val question = questions[currentQuestion]
 
@@ -66,7 +87,10 @@ fun DiagnosticScreen(onContinue: () -> Unit) {
         question.options.forEachIndexed { index, option ->
             val isSelected = selectedOption == index
             OutlinedButton(
-                onClick = { selectedOption = index },
+                onClick = {
+                    selectedOption = index
+                    viewModel.selectLevel(currentQuestion * 4 + index)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
@@ -95,10 +119,9 @@ fun DiagnosticScreen(onContinue: () -> Unit) {
 
         Button(
             onClick = {
-                answers.add(selectedOption ?: 0)
-                selectedOption = null
                 if (currentQuestion < questions.lastIndex) {
                     currentQuestion++
+                    selectedOption = null
                 } else {
                     onContinue()
                 }

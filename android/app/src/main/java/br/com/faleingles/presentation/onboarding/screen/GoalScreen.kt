@@ -8,6 +8,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.faleingles.presentation.onboarding.viewmodel.OnboardingViewModel
 
 private data class GoalOption(val minutes: Int, val label: String, val description: String)
 
@@ -19,8 +22,11 @@ private val goalOptions = listOf(
 )
 
 @Composable
-fun GoalScreen(onContinue: () -> Unit) {
-    var selectedMinutes by remember { mutableIntStateOf(10) }
+fun GoalScreen(
+    onContinue: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -46,9 +52,9 @@ fun GoalScreen(onContinue: () -> Unit) {
         Spacer(Modifier.height(40.dp))
 
         goalOptions.forEach { option ->
-            val isSelected = selectedMinutes == option.minutes
+            val isSelected = state.selectedGoalMinutes == option.minutes
             OutlinedButton(
-                onClick = { selectedMinutes = option.minutes },
+                onClick = { viewModel.selectGoal(option.minutes) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 6.dp),
@@ -88,13 +94,22 @@ fun GoalScreen(onContinue: () -> Unit) {
         Spacer(Modifier.weight(1f))
 
         Button(
-            onClick = onContinue,
+            onClick = { viewModel.completeOnboarding(onContinue) },
+            enabled = !state.isSaving,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = MaterialTheme.shapes.medium,
         ) {
-            Text("Começar agora", style = MaterialTheme.typography.labelLarge)
+            if (state.isSaving) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Text("Começar agora", style = MaterialTheme.typography.labelLarge)
+            }
         }
         Spacer(Modifier.height(32.dp))
     }
