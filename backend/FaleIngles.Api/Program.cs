@@ -2,6 +2,9 @@ using FaleIngles.Api.Endpoints;
 using FaleIngles.Api.Middleware;
 using FaleIngles.Application;
 using FaleIngles.Infrastructure;
+using FaleIngles.Infrastructure.Persistence;
+using FaleIngles.Infrastructure.Persistence.Seed;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -25,6 +28,15 @@ try
     builder.Services.AddOpenApi();
 
     var app = builder.Build();
+
+    // Migrate and seed on startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        await db.Database.MigrateAsync();
+        await LessonSeeder.SeedAsync(db, logger);
+    }
 
     app.UseMiddleware<ExceptionHandlerMiddleware>();
 
