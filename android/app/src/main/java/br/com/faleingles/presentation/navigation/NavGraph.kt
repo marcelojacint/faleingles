@@ -14,6 +14,7 @@ import br.com.faleingles.presentation.onboarding.screen.ManifestoScreen
 import br.com.faleingles.presentation.onboarding.screen.WelcomeScreen
 import br.com.faleingles.presentation.practice.screen.PracticeScreen
 import br.com.faleingles.presentation.audio.screen.AudioScreen
+import br.com.faleingles.presentation.auth.screen.AuthScreen
 import br.com.faleingles.presentation.conversation.screen.ConversationScreen
 import br.com.faleingles.presentation.review.screen.ReviewScreen
 import br.com.faleingles.presentation.progress.screen.ProgressScreen
@@ -24,6 +25,7 @@ sealed interface Route {
     @Serializable data object Manifesto : Route
     @Serializable data object Diagnostic : Route
     @Serializable data object Goal : Route
+    @Serializable data object Auth : Route
     @Serializable data object Home : Route
     @Serializable data class Lesson(val lessonId: String) : Route
     @Serializable data class Practice(val lessonId: String) : Route
@@ -60,7 +62,13 @@ fun FaleInglesNavHost(
 
         composable<Route.Goal> {
             GoalScreen(
-                onContinue = {
+                onContinue = { navController.navigate(Route.Auth) }
+            )
+        }
+
+        composable<Route.Auth> {
+            AuthScreen(
+                onAuthSuccess = {
                     navController.navigate(Route.Home) {
                         popUpTo(Route.Welcome) { inclusive = true }
                     }

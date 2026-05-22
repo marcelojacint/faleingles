@@ -43,6 +43,9 @@ class MainActivity : ComponentActivity() {
                     StartDestination.Onboarding -> {
                         FaleInglesNavHost(startDestination = Route.Welcome)
                     }
+                    StartDestination.Auth -> {
+                        FaleInglesNavHost(startDestination = Route.Auth)
+                    }
                     StartDestination.Home -> {
                         FaleInglesNavHost(startDestination = Route.Home)
                     }
