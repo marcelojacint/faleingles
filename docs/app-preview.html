@@ -467,6 +467,97 @@
   .feedback-bar.wrong { background: var(--error-container); }
   .dark .feedback-bar.wrong { background: var(--error-container-dark); }
 
+  /* ───────── SCREEN: AUDIO ───────── */
+  .audio-phrase-card {
+    background: var(--primary-container);
+    border-radius: var(--radius-lg);
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .dark .audio-phrase-card { background: var(--primary-container-dark); }
+  .speed-chips { display: flex; gap: 6px; }
+  .speed-chip {
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    border: 1.5px solid var(--outline); background: var(--surface);
+    cursor: pointer; color: var(--on-bg); transition: all 0.15s;
+  }
+  .dark .speed-chip { border-color: var(--outline-dark); background: var(--surface-dark); color: var(--on-bg-dark); }
+  .speed-chip.active { border-color: var(--primary); background: rgba(26,107,255,0.1); color: var(--primary); }
+  .dark .speed-chip.active { border-color: var(--primary-dark); color: var(--primary-dark); }
+  .play-btn-big {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--primary); border: none; color: #fff;
+    font-size: 22px; cursor: pointer; transition: opacity 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .play-btn-big:hover { opacity: 0.85; }
+  .rec-btn {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: none; color: #fff; font-size: 20px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, opacity 0.15s;
+  }
+  .rec-btn.idle { background: var(--secondary); }
+  .rec-btn.recording { background: var(--error); animation: pulse-rec 0.8s infinite alternate; }
+  @keyframes pulse-rec { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+  /* ───────── SCREEN: REVIEW ───────── */
+  .flip-card-wrap {
+    width: 100%; height: 220px; perspective: 1000px;
+  }
+  .flip-card-inner {
+    width: 100%; height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  .flip-card-inner.flipped { transform: rotateY(180deg); }
+  .flip-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px;
+    padding: 20px;
+  }
+  .flip-front { background: var(--surface); }
+  .dark .flip-front { background: var(--surface-dark); }
+  .flip-back { background: var(--secondary-container); transform: rotateY(180deg); }
+  .dark .flip-back { background: var(--secondary-container-dark); }
+  .review-actions { display: flex; gap: 10px; }
+  .review-btn {
+    flex: 1; padding: 12px 0;
+    border-radius: var(--radius-md);
+    font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; transition: opacity 0.15s;
+  }
+  .review-btn:hover { opacity: 0.85; }
+  .review-btn.again { background: var(--error-container); color: var(--error); }
+  .review-btn.hard { background: var(--surface-variant); color: var(--on-bg); }
+  .dark .review-btn.hard { background: var(--surface-variant-dark); color: var(--on-bg-dark); }
+  .review-btn.easy { background: var(--secondary); color: #fff; }
+
+  /* ───────── SCREEN: PROGRESS ───────── */
+  .stat-card-p {
+    flex: 1; background: var(--primary-container);
+    border-radius: var(--radius-md); padding: 12px 8px;
+    text-align: center;
+  }
+  .dark .stat-card-p { background: var(--primary-container-dark); }
+  .phase-card-p {
+    background: var(--surface); border-radius: var(--radius-md);
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .dark .phase-card-p { background: var(--surface-dark); }
+  .phase-card-p.done { background: var(--secondary-container); }
+  .dark .phase-card-p.done { background: var(--secondary-container-dark); }
+  .phase-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; flex-shrink: 0;
+  }
+
   /* Notch */
   .notch {
     position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -527,6 +618,9 @@
   <button class="btn-ctrl" onclick="goTo('screen-home')">Home</button>
   <button class="btn-ctrl" onclick="goTo('screen-lesson')">Lição</button>
   <button class="btn-ctrl" onclick="goTo('screen-practice')">Prática</button>
+  <button class="btn-ctrl" onclick="goTo('screen-audio')">Áudio</button>
+  <button class="btn-ctrl" onclick="goTo('screen-review')">Revisão</button>
+  <button class="btn-ctrl" onclick="goTo('screen-progress')">Progresso</button>
   <button class="btn-ctrl" onclick="goTo('screen-conversation')">Conversar</button>
 </div>
 
@@ -806,6 +900,144 @@
       </div>
     </div>
 
+    <!-- ═══════════════ AUDIO ═══════════════ -->
+    <div class="screen" id="screen-audio">
+      <div class="top-bar">
+        <button class="icon-btn" onclick="goTo('screen-lesson')">←</button>
+        <div class="top-bar-title">Ouvir e repetir</div>
+      </div>
+      <div class="scroll" style="gap: 16px; align-items: stretch;">
+        <div style="display: flex; justify-content: space-between;">
+          <span class="t-label primary-color">1 / 3</span>
+          <span class="t-label muted">He is coding</span>
+        </div>
+
+        <div class="audio-phrase-card">
+          <div class="t-headline on-bg">He is coding every single day.</div>
+        </div>
+
+        <div class="card" style="padding: 18px;">
+          <div class="t-label muted" style="margin-bottom: 12px; text-align:center;">Voz nativa</div>
+          <div class="progress-bar-wrap" style="margin-bottom: 14px;"><div class="progress-bar-fill" id="audio-bar" style="width: 0%; transition: width 0.1s;"></div></div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="speed-chips">
+              <button class="speed-chip" onclick="setSpeed(this,'0.75×')">0.75×</button>
+              <button class="speed-chip active" onclick="setSpeed(this,'1×')">1×</button>
+              <button class="speed-chip" onclick="setSpeed(this,'1.25×')">1.25×</button>
+            </div>
+            <button class="play-btn-big" id="play-native-btn" onclick="playNative()">▶</button>
+          </div>
+        </div>
+
+        <div class="card" id="rec-card" style="padding: 18px;">
+          <div class="t-label muted" id="rec-label" style="margin-bottom: 14px; text-align:center;">Sua vez — grave e compare</div>
+          <div style="display: flex; align-items: center; gap: 12px; justify-content: center;">
+            <button class="rec-btn idle" id="rec-btn" onclick="toggleRec()">🎤</button>
+            <button class="btn-outline" id="play-rec-btn" style="display:none; flex:0; padding: 8px 16px;" onclick="alert('▶ Reproduzindo sua voz...')">▶ Minha voz</button>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn-outline" style="flex:1;">← Anterior</button>
+          <button class="btn-primary" style="flex:1;" onclick="goTo('screen-home')">Próxima →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ REVIEW ═══════════════ -->
+    <div class="screen" id="screen-review">
+      <div class="top-bar">
+        <button class="icon-btn" onclick="goTo('screen-home')">←</button>
+        <div class="top-bar-title">Revisão de hoje</div>
+      </div>
+      <div class="scroll" style="gap: 16px;">
+        <div style="display:flex; justify-content: space-between;">
+          <span class="t-label primary-color" id="review-counter">1 / 4</span>
+          <span class="t-label muted">Fase 1</span>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="review-progress" style="width: 25%;"></div></div>
+
+        <div class="flip-card-wrap" onclick="flipReviewCard()">
+          <div class="flip-card-inner" id="flip-card">
+            <div class="flip-face flip-front">
+              <div class="t-label primary-color">Como se diz em inglês?</div>
+              <div class="t-headline on-bg" id="review-translation" style="text-align:center;">Ele está programando todo dia.</div>
+              <div class="t-body-md muted">Toque para revelar</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="t-label" style="color:var(--secondary);">Resposta</div>
+              <div class="t-headline on-bg" id="review-answer" style="text-align:center; color: var(--secondary);">He is coding every single day.</div>
+              <div class="t-body-md muted" style="text-align:center;" id="review-negative">He is not coding every single day.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="review-reveal-btn">
+          <button class="btn-primary" onclick="flipReviewCard()">Revelar resposta</button>
+        </div>
+
+        <div id="review-actions" style="display:none;">
+          <div class="t-title-md on-bg" style="text-align:center; margin-bottom:10px;">Como foi?</div>
+          <div class="review-actions">
+            <button class="review-btn again" onclick="nextReview('again')">De novo</button>
+            <button class="review-btn hard" onclick="nextReview('hard')">Difícil</button>
+            <button class="review-btn easy" onclick="nextReview('easy')">Fácil ✓</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PROGRESS ═══════════════ -->
+    <div class="screen" id="screen-progress">
+      <div class="top-bar">
+        <button class="icon-btn" onclick="goTo('screen-home')">←</button>
+        <div class="top-bar-title">Meu progresso</div>
+      </div>
+      <div class="scroll" style="gap: 14px;">
+        <div style="display:flex; gap:10px;">
+          <div class="stat-card-p">
+            <div style="font-size:22px;">🔥</div>
+            <div class="t-headline on-bg" style="font-size:22px; color:var(--primary);">7</div>
+            <div class="t-body-md muted">dias</div>
+          </div>
+          <div class="stat-card-p">
+            <div style="font-size:22px;">📖</div>
+            <div class="t-headline on-bg" style="font-size:22px; color:var(--primary);">3</div>
+            <div class="t-body-md muted">lições</div>
+          </div>
+          <div class="stat-card-p">
+            <div style="font-size:22px;">⏱️</div>
+            <div class="t-headline on-bg" style="font-size:22px; color:var(--primary);">47</div>
+            <div class="t-body-md muted">minutos</div>
+          </div>
+        </div>
+
+        <div class="section-title">Jornada de aprendizado</div>
+
+        ${[
+          {phase:1, name:'Identity & Being', done:3, total:4, pct:75},
+          {phase:2, name:'Things Around You', done:1, total:4, pct:25},
+          {phase:3, name:'Talking About People', done:0, total:0, pct:0},
+          {phase:4, name:'Real Expressions', done:0, total:0, pct:0},
+          {phase:5, name:'Real Conversation', done:0, total:0, pct:0},
+        ].map(p => `
+          <div class="phase-card-p ${p.pct===100?'done':''}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; gap:10px; align-items:center;">
+                <div class="phase-num" style="background:${p.pct===100?'var(--secondary)':'rgba(26,107,255,0.1)'}; color:${p.pct===100?'#fff':'var(--primary)'};">${p.phase}</div>
+                <div>
+                  <div class="t-title-md on-bg">Fase ${p.phase}</div>
+                  <div class="t-body-md muted">${p.name}</div>
+                </div>
+              </div>
+              ${p.total>0?`<span class="t-label" style="color:${p.pct===100?'var(--secondary)':'var(--primary)'};">${p.done}/${p.total}</span>`:'<span class="t-label muted">Em breve</span>'}
+            </div>
+            ${p.total>0?`<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${p.pct}%; background:${p.pct===100?'var(--secondary)':'var(--primary)'}"></div></div>`:''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
     <!-- ═══════════════ CONVERSATION ═══════════════ -->
     <div class="screen" id="screen-conversation" style="overflow: hidden;">
       <div class="top-bar">
@@ -880,9 +1112,8 @@
   function goTo(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if (id === 'screen-practice') {
-      initPractice();
-    }
+    if (id === 'screen-practice') { initPractice(); }
+    if (id === 'screen-review') { resetReview(); }
     // Scroll chat to bottom when opening conversation
     if (id === 'screen-conversation') {
       setTimeout(() => {
@@ -890,6 +1121,114 @@
         msgs.scrollTop = msgs.scrollHeight;
       }, 50);
     }
+  }
+
+  // ── Audio Screen ──
+  let audioPlaying = false;
+  let audioTimer = null;
+
+  function playNative() {
+    if (audioPlaying) return;
+    audioPlaying = true;
+    const btn = document.getElementById('play-native-btn');
+    btn.textContent = '⏸';
+    let pct = 0;
+    audioTimer = setInterval(() => {
+      pct += 5;
+      document.getElementById('audio-bar').style.width = pct + '%';
+      if (pct >= 100) {
+        clearInterval(audioTimer);
+        audioPlaying = false;
+        btn.textContent = '▶';
+        document.getElementById('audio-bar').style.width = '0%';
+      }
+    }, 100);
+  }
+
+  function setSpeed(el, label) {
+    document.querySelectorAll('.speed-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  let isRecording = false;
+  let recTimer = null;
+
+  function toggleRec() {
+    const btn = document.getElementById('rec-btn');
+    const label = document.getElementById('rec-label');
+    if (!isRecording) {
+      isRecording = true;
+      btn.className = 'rec-btn recording';
+      btn.textContent = '⏹';
+      label.textContent = 'Gravando...';
+    } else {
+      isRecording = false;
+      btn.className = 'rec-btn idle';
+      btn.textContent = '🎤';
+      label.textContent = 'Gravação pronta!';
+      document.getElementById('play-rec-btn').style.display = '';
+    }
+  }
+
+  // ── Review Screen ──
+  const reviewCards = [
+    { translation: 'Ele está programando todo dia.', answer: 'He is coding every single day.', neg: 'He is not coding every single day.' },
+    { translation: 'Ela é minha amiga.',             answer: 'She is my friend.',              neg: 'She is not my friend.' },
+    { translation: 'Eu sou do Brasil.',              answer: 'I am from Brazil.',               neg: 'I am not from Brazil.' },
+    { translation: 'Há água na garrafa.',            answer: 'There is some water in the bottle.', neg: 'There is no water in the bottle.' },
+  ];
+  let reviewIdx = 0;
+  let reviewFlipped = false;
+  let reviewEasy = 0, reviewHard = 0, reviewAgain = 0;
+
+  function flipReviewCard() {
+    if (reviewFlipped) return;
+    reviewFlipped = true;
+    document.getElementById('flip-card').classList.add('flipped');
+    document.getElementById('review-reveal-btn').style.display = 'none';
+    document.getElementById('review-actions').style.display = '';
+  }
+
+  function nextReview(quality) {
+    if (quality === 'easy') reviewEasy++;
+    else if (quality === 'hard') reviewHard++;
+    else reviewAgain++;
+
+    reviewIdx++;
+    if (reviewIdx >= reviewCards.length) {
+      showReviewResult();
+      return;
+    }
+    reviewFlipped = false;
+    const card = reviewCards[reviewIdx];
+    document.getElementById('review-translation').textContent = card.translation;
+    document.getElementById('review-answer').textContent = card.answer;
+    document.getElementById('review-negative').textContent = card.neg;
+    document.getElementById('flip-card').classList.remove('flipped');
+    document.getElementById('review-reveal-btn').style.display = '';
+    document.getElementById('review-actions').style.display = 'none';
+    document.getElementById('review-counter').textContent = `${reviewIdx + 1} / ${reviewCards.length}`;
+    document.getElementById('review-progress').style.width = `${(reviewIdx / reviewCards.length) * 100}%`;
+  }
+
+  function showReviewResult() {
+    const screen = document.getElementById('screen-review');
+    screen.querySelector('.scroll').innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;text-align:center;padding-top:40px;">
+        <div style="font-size:48px;">🎯</div>
+        <div class="t-headline on-bg">Revisão concluída!</div>
+        <div class="card" style="width:100%;padding:20px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span class="t-body-lg on-bg">Total</span><span class="t-title-md primary-color">${reviewCards.length} frases</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span class="t-body-lg on-bg">Fácil</span><span class="t-title-md" style="color:var(--secondary);">${reviewEasy} ✅</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span class="t-body-lg on-bg">Difícil</span><span class="t-title-md" style="color:orange;">${reviewHard} 🟡</span></div>
+          <div style="display:flex;justify-content:space-between;"><span class="t-body-lg on-bg">De novo</span><span class="t-title-md" style="color:var(--error);">${reviewAgain} 🔴</span></div>
+        </div>
+        <button class="btn-primary" style="width:100%;height:52px;" onclick="resetReview(); goTo('screen-home')">Concluir</button>
+      </div>`;
+  }
+
+  function resetReview() {
+    reviewIdx = 0; reviewFlipped = false; reviewEasy = 0; reviewHard = 0; reviewAgain = 0;
   }
 
   // ── Manifesto ──
