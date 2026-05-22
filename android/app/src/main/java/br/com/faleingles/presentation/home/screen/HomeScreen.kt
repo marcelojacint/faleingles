@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.outlined.Chat
+import androidx.compose.material.icons.outlined.Leaderboard
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +30,8 @@ import br.com.faleingles.presentation.home.viewmodel.HomeViewModel
 fun HomeScreen(
     onLessonClick: (String) -> Unit,
     onConversationClick: () -> Unit,
+    onReviewClick: () -> Unit = {},
+    onProgressClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -36,6 +41,12 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("FaleInglês", style = MaterialTheme.typography.titleLarge) },
                 actions = {
+                    IconButton(onClick = onReviewClick) {
+                        Icon(Icons.Outlined.Refresh, contentDescription = "Revisar")
+                    }
+                    IconButton(onClick = onProgressClick) {
+                        Icon(Icons.Outlined.Leaderboard, contentDescription = "Progresso")
+                    }
                     IconButton(onClick = onConversationClick) {
                         Icon(Icons.Outlined.Chat, contentDescription = "Conversar com IA")
                     }
