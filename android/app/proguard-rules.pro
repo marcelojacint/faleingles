@@ -1,0 +1,4 @@
+-keep class br.com.faleingles.data.remote.dto.** { *; }
+-keep class br.com.faleingles.domain.model.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
