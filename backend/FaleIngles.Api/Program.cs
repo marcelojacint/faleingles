@@ -22,9 +22,7 @@ try
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
 
-    builder.Services.AddAuthentication().AddJwtBearer();
-    builder.Services.AddAuthorization();
-
+    builder.Services.AddHttpClient();
     builder.Services.AddOpenApi();
 
     var app = builder.Build();
@@ -39,6 +37,7 @@ try
     }
 
     app.UseMiddleware<ExceptionHandlerMiddleware>();
+    app.UseMiddleware<FirebaseAuthMiddleware>();
 
     if (app.Environment.IsDevelopment())
     {
@@ -47,8 +46,6 @@ try
     }
 
     app.UseHttpsRedirection();
-    app.UseAuthentication();
-    app.UseAuthorization();
 
     app.MapLessonsEndpoints();
     app.MapConversationEndpoints();

@@ -23,7 +23,7 @@ public static class ConversationEndpoints
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var userId = http.User.FindFirst("sub")?.Value ?? string.Empty;
+        var userId = http.GetUserId();
 
         var command = new SendMessageCommand(
             UserId: userId,

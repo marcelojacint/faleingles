@@ -28,7 +28,7 @@ public static class LessonsEndpoints
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var userId = http.User.FindFirst("sub")?.Value ?? string.Empty;
+        var userId = http.GetUserId();
         var result = await sender.Send(new GetLessonsQuery(userId), cancellationToken);
         return result.ToHttpResult();
     }
@@ -39,7 +39,7 @@ public static class LessonsEndpoints
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var userId = http.User.FindFirst("sub")?.Value ?? string.Empty;
+        var userId = http.GetUserId();
         var result = await sender.Send(new GetLessonByIdQuery(id, userId), cancellationToken);
         return result.ToHttpResult();
     }
