@@ -418,6 +418,55 @@
   }
   .send-btn:disabled { opacity: 0.3; cursor: default; }
 
+  /* ───────── SCREEN: PRACTICE ───────── */
+  .practice-word-bank {
+    display: flex; flex-wrap: wrap;
+    gap: 8px; justify-content: center;
+    padding: 14px;
+    background: var(--surface-variant);
+    border-radius: var(--radius-lg);
+  }
+  .dark .practice-word-bank { background: var(--surface-variant-dark); }
+  .pword {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .pword.bank { background: var(--primary); color: #fff; }
+  .pword.bank:hover { opacity: 0.85; transform: translateY(-1px); }
+  .pword.bank:disabled { opacity: 0.35; cursor: default; transform: none; }
+  .pword.placed { background: var(--primary-container); color: var(--primary); }
+  .dark .pword.placed { color: var(--primary-dark); }
+  .pword.placed:hover { opacity: 0.8; }
+  .answer-area {
+    min-height: 72px;
+    border: 2px dashed var(--outline);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    display: flex; flex-wrap: wrap;
+    gap: 8px; align-items: center; justify-content: center;
+    transition: border-color 0.3s;
+  }
+  .dark .answer-area { border-color: var(--outline-dark); }
+  .answer-area.correct { border-color: var(--secondary); background: rgba(0,200,150,0.06); }
+  .answer-area.wrong { border-color: var(--error); background: rgba(255,77,77,0.06); }
+  .answer-placeholder { font-size: 13px; color: var(--on-surface-muted); }
+  .dark .answer-placeholder { color: var(--on-surface-muted-dark); }
+  .feedback-bar {
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px;
+  }
+  .feedback-bar.correct { background: var(--secondary-container); }
+  .dark .feedback-bar.correct { background: var(--secondary-container-dark); }
+  .feedback-bar.wrong { background: var(--error-container); }
+  .dark .feedback-bar.wrong { background: var(--error-container-dark); }
+
   /* Notch */
   .notch {
     position: absolute; top: 0; left: 50%; transform: translateX(-50%);
@@ -477,6 +526,7 @@
   <button class="btn-ctrl" onclick="goTo('screen-goal')">Meta</button>
   <button class="btn-ctrl" onclick="goTo('screen-home')">Home</button>
   <button class="btn-ctrl" onclick="goTo('screen-lesson')">Lição</button>
+  <button class="btn-ctrl" onclick="goTo('screen-practice')">Prática</button>
   <button class="btn-ctrl" onclick="goTo('screen-conversation')">Conversar</button>
 </div>
 
@@ -708,8 +758,51 @@
 
         <div class="btn-row">
           <button class="btn-outline" onclick="goTo('screen-home')">Próxima frase</button>
-          <button class="btn-primary" style="flex: 1;" onclick="alert('🎯 Iniciando prática...')">Praticar</button>
+          <button class="btn-primary" style="flex: 1;" onclick="goTo('screen-practice')">Praticar</button>
         </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PRACTICE ═══════════════ -->
+    <div class="screen" id="screen-practice">
+      <div class="top-bar">
+        <button class="icon-btn" onclick="goTo('screen-lesson')">←</button>
+        <div class="top-bar-title">He is coding</div>
+        <button class="icon-btn" id="hint-btn" onclick="useHint()" title="Usar dica">💡 <span id="hints-left">3</span></button>
+      </div>
+      <div class="scroll" style="gap: 14px;">
+
+        <!-- Progress -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="t-label primary-color">Frase 1 de 3</span>
+            <span class="t-label" style="color: var(--secondary);">✓ <span id="correct-count">0</span> acertos</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="practice-progress" style="width: 33%"></div></div>
+        </div>
+
+        <!-- Instruction -->
+        <div class="card-secondary-container" style="text-align: center; padding: 10px 16px;">
+          <span class="t-body-md" style="color: #00674E;">Monte a frase tocando nas palavras na ordem correta</span>
+        </div>
+
+        <!-- Answer area -->
+        <div class="answer-area" id="answer-area">
+          <span class="answer-placeholder" id="answer-placeholder">Toque nas palavras abaixo para montar a frase</span>
+        </div>
+
+        <!-- Feedback -->
+        <div id="feedback-bar" style="display: none;"></div>
+
+        <!-- Word bank -->
+        <div>
+          <div class="t-label muted" style="margin-bottom: 8px;">Palavras disponíveis</div>
+          <div class="practice-word-bank" id="word-bank"></div>
+        </div>
+
+        <!-- Action button -->
+        <button class="btn-primary" id="practice-btn" onclick="checkPractice()" disabled>Verificar</button>
+
       </div>
     </div>
 
@@ -787,6 +880,9 @@
   function goTo(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    if (id === 'screen-practice') {
+      initPractice();
+    }
     // Scroll chat to bottom when opening conversation
     if (id === 'screen-conversation') {
       setTimeout(() => {
@@ -857,6 +953,177 @@
     document.getElementById('detail-type').textContent = type;
     document.getElementById('detail-role').textContent = role;
     document.getElementById('word-detail-card').style.display = '';
+  }
+
+  // ── Practice Screen ──
+  const practiceExercises = [
+    { phrase: 'He is coding every single day.', words: ['He','is','coding','every','single','day'], distractors: ['not','a','very','the'] },
+    { phrase: 'She is my friend.',              words: ['She','is','my','friend'],                   distractors: ['not','a','am','are'] },
+    { phrase: 'I am from Brazil.',              words: ['I','am','from','Brazil'],                   distractors: ['not','is','are','of'] },
+  ];
+  let practiceIdx = 0;
+  let placedWords = [];
+  let bankWords = [];
+  let practiceResult = 'none'; // 'none' | 'correct' | 'wrong'
+  let hintsLeft = 3;
+  let correctCount = 0;
+
+  function initPractice() {
+    practiceIdx = 0; hintsLeft = 3; correctCount = 0;
+    loadPracticeExercise();
+  }
+
+  function loadPracticeExercise() {
+    practiceResult = 'none';
+    placedWords = [];
+    const ex = practiceExercises[practiceIdx];
+    bankWords = [...ex.words, ...ex.distractors].sort(() => Math.random() - 0.5);
+
+    // Update progress
+    const pct = ((practiceIdx + 1) / practiceExercises.length) * 100;
+    document.getElementById('practice-progress').style.width = pct + '%';
+    document.getElementById('correct-count').textContent = correctCount;
+    document.getElementById('hints-left').textContent = hintsLeft;
+
+    // Reset UI
+    const answerEl = document.getElementById('answer-area');
+    answerEl.className = 'answer-area';
+    document.getElementById('feedback-bar').style.display = 'none';
+    document.getElementById('answer-placeholder').style.display = '';
+
+    const btn = document.getElementById('practice-btn');
+    btn.textContent = 'Verificar';
+    btn.disabled = true;
+    btn.onclick = checkPractice;
+
+    renderBank();
+    renderPlaced();
+  }
+
+  function renderBank() {
+    const bankEl = document.getElementById('word-bank');
+    bankEl.innerHTML = '';
+    bankWords.forEach(w => {
+      const btn = document.createElement('button');
+      btn.className = 'pword bank';
+      btn.textContent = w;
+      btn.disabled = practiceResult !== 'none';
+      btn.onclick = () => placeWord(w);
+      bankEl.appendChild(btn);
+    });
+  }
+
+  function renderPlaced() {
+    const answerEl = document.getElementById('answer-area');
+    const placeholder = document.getElementById('answer-placeholder');
+    // Clear placed word chips (keep placeholder)
+    answerEl.querySelectorAll('.pword').forEach(e => e.remove());
+
+    placeholder.style.display = placedWords.length === 0 ? '' : 'none';
+
+    placedWords.forEach((w, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'pword placed';
+      btn.textContent = w;
+      btn.disabled = practiceResult !== 'none';
+      btn.onclick = () => removeWord(idx);
+      answerEl.insertBefore(btn, placeholder);
+    });
+
+    document.getElementById('practice-btn').disabled =
+      placedWords.length === 0 || practiceResult !== 'none';
+  }
+
+  function placeWord(word) {
+    if (practiceResult !== 'none') return;
+    bankWords = removeFirst(bankWords, word);
+    placedWords.push(word);
+    renderBank();
+    renderPlaced();
+  }
+
+  function removeWord(idx) {
+    if (practiceResult !== 'none') return;
+    const word = placedWords.splice(idx, 1)[0];
+    bankWords.push(word);
+    renderBank();
+    renderPlaced();
+  }
+
+  function removeFirst(arr, val) {
+    const i = arr.indexOf(val);
+    if (i === -1) return arr;
+    return [...arr.slice(0, i), ...arr.slice(i + 1)];
+  }
+
+  function useHint() {
+    if (hintsLeft <= 0 || practiceResult !== 'none') return;
+    const ex = practiceExercises[practiceIdx];
+    const nextIdx = placedWords.length;
+    if (nextIdx >= ex.words.length) return;
+    const correctWord = ex.words[nextIdx];
+    if (bankWords.includes(correctWord)) {
+      placeWord(correctWord);
+      hintsLeft--;
+      document.getElementById('hints-left').textContent = hintsLeft;
+      if (hintsLeft === 0) document.getElementById('hint-btn').style.opacity = '0.3';
+    }
+  }
+
+  function checkPractice() {
+    const ex = practiceExercises[practiceIdx];
+    const isCorrect = placedWords.join(' ') === ex.words.join(' ');
+    practiceResult = isCorrect ? 'correct' : 'wrong';
+
+    if (isCorrect) correctCount++;
+    document.getElementById('correct-count').textContent = correctCount;
+
+    const answerEl = document.getElementById('answer-area');
+    answerEl.className = 'answer-area ' + practiceResult;
+
+    const feedbackEl = document.getElementById('feedback-bar');
+    feedbackEl.style.display = 'flex';
+    feedbackEl.className = 'feedback-bar ' + practiceResult;
+    feedbackEl.innerHTML = isCorrect
+      ? `<span style="font-size:22px">✅</span><div><b style="color:#006644">Correto!</b></div>`
+      : `<span style="font-size:22px">❌</span><div><b style="color:#b00">Quase lá!</b><br><span style="font-size:13px;color:#900;opacity:.8">Resposta: ${ex.phrase}</span></div>`;
+
+    // Disable bank and placed
+    document.querySelectorAll('.pword').forEach(b => b.disabled = true);
+
+    const btn = document.getElementById('practice-btn');
+    const isLast = practiceIdx >= practiceExercises.length - 1;
+    btn.textContent = isLast ? 'Ver resultado' : 'Próxima frase';
+    btn.disabled = false;
+    btn.onclick = isLast ? showPracticeResult : nextPracticeExercise;
+  }
+
+  function nextPracticeExercise() {
+    practiceIdx++;
+    loadPracticeExercise();
+  }
+
+  function showPracticeResult() {
+    const pct = Math.round((correctCount / practiceExercises.length) * 100);
+    const emoji = pct === 100 ? '🎉' : pct >= 80 ? '😊' : '💪';
+    const msg = pct === 100 ? 'Perfeito!' : pct >= 80 ? 'Muito bem!' : 'Continue praticando!';
+    const answerEl = document.getElementById('answer-area');
+    answerEl.innerHTML = '';
+    answerEl.className = 'answer-area';
+    answerEl.style.minHeight = '180px';
+    answerEl.style.flexDirection = 'column';
+    answerEl.innerHTML = `
+      <div style="font-size:48px">${emoji}</div>
+      <div style="font-size:20px;font-weight:700;color:var(--on-bg)">${msg}</div>
+      <div style="font-size:14px;color:var(--on-surface-muted)">${correctCount} de ${practiceExercises.length} corretas (${pct}%)</div>
+    `;
+    document.getElementById('word-bank').innerHTML = '';
+    document.getElementById('feedback-bar').style.display = 'none';
+    document.getElementById('hint-btn').style.display = 'none';
+    const btn = document.getElementById('practice-btn');
+    btn.textContent = 'Concluir lição';
+    btn.disabled = false;
+    btn.onclick = () => { goTo('screen-home'); initPractice(); document.getElementById('hint-btn').style.display = ''; };
   }
 
   // ── Translation toggle ──
