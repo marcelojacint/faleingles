@@ -46,14 +46,14 @@ fun ManifestoScreen(onContinue: () -> Unit) {
                     text = pages[it].title,
                     style = MaterialTheme.typography.displayMedium,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = androidx.compose.ui.graphics.Color(0xFF111111),
                 )
                 Spacer(Modifier.height(20.dp))
                 Text(
                     text = pages[it].body,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f),
+                    color = androidx.compose.ui.graphics.Color(0xFF444444),
                 )
             }
         }

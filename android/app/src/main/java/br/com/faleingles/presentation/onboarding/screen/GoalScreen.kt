@@ -66,7 +66,7 @@ fun GoalScreen(
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = if (isSelected)
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
-                    else MaterialTheme.colorScheme.surface,
+                    else androidx.compose.ui.graphics.Color.White,
                 ),
             ) {
                 Row(
@@ -80,7 +80,7 @@ fun GoalScreen(
                         text = option.label,
                         style = MaterialTheme.typography.titleMedium,
                         color = if (isSelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurface,
+                        else androidx.compose.ui.graphics.Color(0xFF111111),
                     )
                     Text(
                         text = option.description,
