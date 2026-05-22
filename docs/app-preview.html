@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FaleInglês — App Preview</title>
+<style>
+  :root {
+    --primary: #1A6BFF;
+    --primary-dark: #4D8FFF;
+    --secondary: #00C896;
+    --error: #FF4D4D;
+    --bg: #F8F9FF;
+    --bg-dark: #0F1117;
+    --surface: #FFFFFF;
+    --surface-dark: #1A1D27;
+    --surface-variant: #EEF0FF;
+    --surface-variant-dark: #252836;
+    --on-bg: #0F1117;
+    --on-bg-dark: #F0F2FF;
+    --on-surface-muted: rgba(15,17,23,0.55);
+    --on-surface-muted-dark: rgba(240,242,255,0.55);
+    --outline: #C8CAD8;
+    --outline-dark: #3A3D4E;
+    --primary-container: #D6E4FF;
+    --primary-container-dark: #1A2E55;
+    --secondary-container: #C8F5E8;
+    --secondary-container-dark: #0D3028;
+    --error-container: #FFE0E0;
+    --error-container-dark: #3D1515;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  h1 { color: #fff; font-size: 14px; font-weight: 500; letter-spacing: 0.1em; opacity: 0.6; text-transform: uppercase; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .btn-ctrl {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-ctrl:hover { background: rgba(255,255,255,0.2); }
+  .btn-ctrl.active { background: var(--primary); border-color: var(--primary); }
+
+  /* Phone frame */
+  .phone {
+    width: 375px;
+    height: 780px;
+    background: var(--surface);
+    border-radius: 44px;
+    box-shadow: 0 0 0 10px #111, 0 30px 80px rgba(0,0,0,0.6);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s;
+  }
+  .phone.dark { background: var(--surface-dark); }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--on-bg);
+    flex-shrink: 0;
+  }
+  .dark .status-bar { color: var(--on-bg-dark); }
+  .status-time { font-size: 15px; font-weight: 700; }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+
+  /* Screen container */
+  .screen-wrap {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .dark .screen { background: var(--bg-dark); }
+  .screen.active { opacity: 1; pointer-events: all; }
+
+  /* Typography */
+  .t-display { font-size: 28px; font-weight: 700; line-height: 1.2; }
+  .t-headline { font-size: 22px; font-weight: 600; line-height: 1.3; }
+  .t-title-lg { font-size: 18px; font-weight: 600; }
+  .t-title-md { font-size: 16px; font-weight: 500; }
+  .t-body-lg { font-size: 16px; }
+  .t-body-md { font-size: 14px; }
+  .t-label { font-size: 13px; font-weight: 600; }
+  .on-bg { color: var(--on-bg); }
+  .dark .on-bg { color: var(--on-bg-dark); }
+  .muted { color: var(--on-surface-muted); }
+  .dark .muted { color: var(--on-surface-muted-dark); }
+  .primary-color { color: var(--primary); }
+  .dark .primary-color { color: var(--primary-dark); }
+
+  /* Top App Bar */
+  .top-bar {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px 0 4px;
+    gap: 4px;
+    border-bottom: 1px solid transparent;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .dark .top-bar { background: var(--bg-dark); }
+  .top-bar-title { font-size: 18px; font-weight: 600; color: var(--on-bg); flex: 1; padding-left: 12px; }
+  .dark .top-bar-title { color: var(--on-bg-dark); }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--on-bg);
+    font-size: 18px;
+    transition: background 0.15s;
+  }
+  .dark .icon-btn { color: var(--on-bg-dark); }
+  .icon-btn:hover { background: rgba(0,0,0,0.06); }
+  .dark .icon-btn:hover { background: rgba(255,255,255,0.08); }
+
+  /* Scroll area */
+  .scroll { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%; height: 52px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.4; cursor: default; }
+  .btn-primary.on-primary { background: #fff; color: var(--primary); }
+
+  .btn-outline {
+    flex: 1; height: 48px;
+    background: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .dark .btn-outline { color: var(--primary-dark); border-color: var(--primary-dark); }
+  .btn-outline:hover { background: rgba(26,107,255,0.08); }
+
+  .btn-text {
+    background: transparent; border: none;
+    color: var(--primary); font-size: 14px; font-weight: 600;
+    cursor: pointer; padding: 8px 0;
+  }
+  .dark .btn-text { color: var(--primary-dark); }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .dark .card { background: var(--surface-dark); }
+  .card-primary-container {
+    background: var(--primary-container);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .dark .card-primary-container { background: var(--primary-container-dark); }
+  .card-secondary-container {
+    background: var(--secondary-container);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .dark .card-secondary-container { background: var(--secondary-container-dark); }
+  .card-error-container {
+    background: var(--error-container);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+  }
+  .dark .card-error-container { background: var(--error-container-dark); }
+
+  /* ───────── SCREEN: WELCOME ───────── */
+  #screen-welcome {
+    background: var(--primary) !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 64px 32px 48px;
+  }
+  .welcome-logo { text-align: center; }
+  .welcome-logo h2 { font-size: 40px; font-weight: 800; color: #fff; }
+  .welcome-logo p { font-size: 16px; color: rgba(255,255,255,0.8); margin-top: 8px; }
+  .welcome-bottom { width: 100%; }
+
+  /* ───────── SCREEN: MANIFESTO ───────── */
+  .manifesto-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px;
+    gap: 20px;
+    text-align: center;
+  }
+  .dots { display: flex; justify-content: center; gap: 8px; }
+  .dot {
+    height: 8px; border-radius: 4px;
+    background: var(--primary);
+    transition: width 0.3s, opacity 0.3s;
+  }
+  .dot.active { width: 24px; }
+  .dot.inactive { width: 8px; opacity: 0.3; }
+  .manifesto-footer { padding: 0 32px 48px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+
+  /* ───────── SCREEN: DIAGNOSTIC ───────── */
+  .diag-body { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+  .progress-bar-wrap { height: 4px; background: var(--outline); border-radius: 2px; }
+  .dark .progress-bar-wrap { background: var(--outline-dark); }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.4s; }
+  .diag-option {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--outline);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--on-bg);
+  }
+  .dark .diag-option { border-color: var(--outline-dark); background: var(--surface-dark); color: var(--on-bg-dark); }
+  .diag-option.selected { border-color: var(--primary); background: rgba(26,107,255,0.08); color: var(--primary); }
+  .dark .diag-option.selected { border-color: var(--primary-dark); color: var(--primary-dark); }
+  .diag-footer { padding: 0 24px 40px; }
+
+  /* ───────── SCREEN: GOAL ───────── */
+  .goal-option {
+    width: 100%; padding: 16px 18px;
+    border: 1.5px solid var(--outline);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dark .goal-option { border-color: var(--outline-dark); background: var(--surface-dark); }
+  .goal-option.selected { border-color: var(--primary); background: rgba(26,107,255,0.08); }
+  .dark .goal-option.selected { border-color: var(--primary-dark); }
+  .goal-option .label { font-size: 15px; font-weight: 600; color: var(--on-bg); }
+  .dark .goal-option .label { color: var(--on-bg-dark); }
+  .goal-option.selected .label { color: var(--primary); }
+  .dark .goal-option.selected .label { color: var(--primary-dark); }
+  .goal-option .desc { font-size: 12px; color: var(--on-surface-muted); }
+  .dark .goal-option .desc { color: var(--on-surface-muted-dark); }
+
+  /* ───────── SCREEN: HOME ───────── */
+  .streak-row { display: flex; justify-content: space-between; align-items: center; }
+  .lesson-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .lesson-item:hover { opacity: 0.85; }
+  .lesson-icon {
+    width: 46px; height: 46px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .lesson-icon.unlocked { background: rgba(26,107,255,0.1); }
+  .lesson-icon.locked { background: rgba(0,0,0,0.06); }
+  .dark .lesson-icon.locked { background: rgba(255,255,255,0.06); }
+  .lesson-info { flex: 1; min-width: 0; }
+  .lesson-phase { font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 0.05em; text-transform: uppercase; }
+  .dark .lesson-phase { color: var(--primary-dark); }
+  .lesson-title { font-size: 15px; font-weight: 600; color: var(--on-bg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dark .lesson-title { color: var(--on-bg-dark); }
+  .lesson-ctx { font-size: 12px; color: var(--on-surface-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dark .lesson-ctx { color: var(--on-surface-muted-dark); }
+  .section-title { font-size: 17px; font-weight: 600; color: var(--on-bg); padding: 4px 0; }
+  .dark .section-title { color: var(--on-bg-dark); }
+
+  /* ───────── SCREEN: LESSON ───────── */
+  .phrase-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .word-chip {
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--on-bg);
+  }
+  .dark .word-chip { color: var(--on-bg-dark); }
+  .word-chip:hover { background: rgba(26,107,255,0.08); }
+  .word-chip.selected { background: rgba(26,107,255,0.15); color: var(--primary); }
+  .dark .word-chip.selected { color: var(--primary-dark); }
+  .form-row { display: flex; gap: 12px; margin-bottom: 8px; }
+  .form-label { font-size: 13px; font-weight: 700; color: var(--primary); width: 96px; flex-shrink: 0; padding-top: 2px; }
+  .dark .form-label { color: var(--primary-dark); }
+  .form-text { font-size: 14px; color: var(--on-bg); line-height: 1.5; }
+  .dark .form-text { color: var(--on-bg-dark); }
+  .word-detail { padding: 14px; }
+  .word-detail-top { display: flex; justify-content: space-between; align-items: center; }
+  .grammar-chip {
+    background: rgba(26,107,255,0.15);
+    color: var(--primary);
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .dark .grammar-chip { color: var(--primary-dark); }
+  .divider { height: 1px; background: var(--outline); margin: 12px 0; }
+  .dark .divider { background: var(--outline-dark); }
+  .btn-row { display: flex; gap: 12px; }
+  .lesson-card-pad { padding: 18px; }
+
+  /* ───────── SCREEN: CONVERSATION ───────── */
+  .messages { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+  .messages::-webkit-scrollbar { width: 0; }
+  .msg-row { display: flex; }
+  .msg-row.user { justify-content: flex-end; }
+  .msg-row.ai { justify-content: flex-start; }
+  .msg-col { display: flex; flex-direction: column; max-width: 82%; gap: 4px; }
+  .msg-col.user { align-items: flex-end; }
+  .bubble {
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .bubble.user { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+  .bubble.ai { background: var(--surface-variant); color: var(--on-bg); border-bottom-left-radius: 4px; }
+  .dark .bubble.ai { background: var(--surface-variant-dark); color: var(--on-bg-dark); }
+  .correction { font-size: 12px; line-height: 1.4; }
+  .correction strong { display: block; margin-bottom: 2px; }
+  .chat-input-area {
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid var(--outline);
+    background: var(--bg);
+  }
+  .dark .chat-input-area { border-color: var(--outline-dark); background: var(--bg-dark); }
+  .chat-input {
+    flex: 1; height: 40px; padding: 0 14px;
+    border: 1.5px solid var(--outline);
+    border-radius: 20px;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--on-bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .dark .chat-input { border-color: var(--outline-dark); background: var(--surface-dark); color: var(--on-bg-dark); }
+  .chat-input:focus { border-color: var(--primary); }
+  .send-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--primary); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #fff; font-size: 16px;
+    transition: opacity 0.15s;
+  }
+  .send-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* Notch */
+  .notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 30px;
+    background: #111;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Nav hint */
+  .nav-hint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+  }
+
+  /* PRO badge */
+  .pro-badge {
+    background: linear-gradient(135deg, #FFB800, #FF6B00);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Home bar */
+  .home-bar {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .home-bar-line {
+    width: 120px; height: 4px;
+    background: var(--on-bg);
+    border-radius: 2px;
+    opacity: 0.15;
+  }
+  .dark .home-bar-line { background: var(--on-bg-dark); }
+</style>
+</head>
+<body>
+
+<h1>FaleInglês — Simulação de Telas</h1>
+
+<div class="controls">
+  <button class="btn-ctrl active" onclick="setTheme('light')">☀️ Light</button>
+  <button class="btn-ctrl" onclick="setTheme('dark')">🌙 Dark</button>
+  <span style="color:rgba(255,255,255,0.3)">|</span>
+  <button class="btn-ctrl" onclick="goTo('screen-welcome')">Welcome</button>
+  <button class="btn-ctrl" onclick="goTo('screen-manifesto')">Manifesto</button>
+  <button class="btn-ctrl" onclick="goTo('screen-diagnostic')">Diagnóstico</button>
+  <button class="btn-ctrl" onclick="goTo('screen-goal')">Meta</button>
+  <button class="btn-ctrl" onclick="goTo('screen-home')">Home</button>
+  <button class="btn-ctrl" onclick="goTo('screen-lesson')">Lição</button>
+  <button class="btn-ctrl" onclick="goTo('screen-conversation')">Conversar</button>
+</div>
+
+<div class="phone" id="phone">
+  <div class="notch"></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <span>📶</span><span>🔋</span>
+    </div>
+  </div>
+
+  <div class="screen-wrap">
+
+    <!-- ═══════════════ WELCOME ═══════════════ -->
+    <div class="screen active" id="screen-welcome" style="background: var(--primary) !important; align-items: center; justify-content: space-between; padding: 64px 32px 48px;">
+      <div></div>
+      <div class="welcome-logo">
+        <div style="font-size: 56px; margin-bottom: 16px;">🗣️</div>
+        <h2 style="font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 8px;">FaleInglês</h2>
+        <p style="font-size: 15px; color: rgba(255,255,255,0.8); text-align: center; line-height: 1.5;">Inglês de verdade,<br>frase por frase.</p>
+      </div>
+      <div style="width: 100%;">
+        <button class="btn-primary on-primary" onclick="goTo('screen-manifesto')">Começar</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ MANIFESTO ═══════════════ -->
+    <div class="screen" id="screen-manifesto" style="justify-content: space-between;">
+      <div class="manifesto-body" id="manifesto-body">
+        <div class="t-display on-bg" id="manifesto-title">Você não aprendeu português decorando palavras.</div>
+        <div class="t-body-lg muted" id="manifesto-body-text">Aprendeu ouvindo frases inteiras, em situações reais, repetidas até virarem som natural.</div>
+      </div>
+      <div class="manifesto-footer">
+        <div class="dots">
+          <div class="dot active" id="dot-0"></div>
+          <div class="dot inactive" id="dot-1"></div>
+          <div class="dot inactive" id="dot-2"></div>
+        </div>
+        <button class="btn-primary" id="manifesto-btn" onclick="nextManifesto()">Próximo</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ DIAGNOSTIC ═══════════════ -->
+    <div class="screen" id="screen-diagnostic" style="justify-content: space-between;">
+      <div class="diag-body">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="t-label primary-color">Pergunta 1 de 3</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: 33%"></div></div>
+        </div>
+        <div class="t-headline on-bg">Qual dessas frases você entende sem tradução?</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="diag-option" onclick="selectDiag(this)">Nenhuma delas</button>
+          <button class="diag-option" onclick="selectDiag(this)">"Hello, how are you?"</button>
+          <button class="diag-option selected" onclick="selectDiag(this)">"I'm going to the store later"</button>
+          <button class="diag-option" onclick="selectDiag(this)">"Why is everybody so upset about this?"</button>
+        </div>
+      </div>
+      <div class="diag-footer">
+        <button class="btn-primary" onclick="goTo('screen-goal')">Próxima</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ GOAL ═══════════════ -->
+    <div class="screen" id="screen-goal">
+      <div style="padding: 32px 24px 0; display: flex; flex-direction: column; gap: 8px;">
+        <div class="t-display on-bg">Quanto tempo por dia?</div>
+        <div class="t-body-lg muted">Consistência importa mais que intensidade.</div>
+      </div>
+      <div class="scroll">
+        <div class="goal-option" onclick="selectGoal(this)">
+          <span class="label">5 minutos</span>
+          <span class="desc">Leve — para manter o hábito</span>
+        </div>
+        <div class="goal-option selected" onclick="selectGoal(this)">
+          <span class="label">10 minutos</span>
+          <span class="desc">Regular — progresso constante</span>
+        </div>
+        <div class="goal-option" onclick="selectGoal(this)">
+          <span class="label">15 minutos</span>
+          <span class="desc">Dedicado — resultados mais rápidos</span>
+        </div>
+        <div class="goal-option" onclick="selectGoal(this)">
+          <span class="label">20 minutos</span>
+          <span class="desc">Intenso — para quem tem pressa</span>
+        </div>
+        <div style="margin-top: 8px;">
+          <button class="btn-primary" onclick="goTo('screen-home')">Começar agora</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ HOME ═══════════════ -->
+    <div class="screen" id="screen-home">
+      <div class="top-bar">
+        <div class="top-bar-title">FaleInglês</div>
+        <button class="icon-btn" onclick="goTo('screen-conversation')" title="Conversar com IA">💬</button>
+      </div>
+      <div class="scroll">
+        <!-- Streak card -->
+        <div class="card-primary-container">
+          <div class="streak-row">
+            <div>
+              <div class="t-title-md" style="color: var(--primary); font-weight: 700;">7 dias seguidos</div>
+              <div class="t-body-md" style="color: var(--primary); opacity: 0.7; margin-top: 2px;">8 / 10 min hoje</div>
+              <div style="margin-top: 8px; height: 4px; background: rgba(26,107,255,0.2); border-radius: 2px; width: 160px;">
+                <div style="height: 100%; width: 80%; background: var(--primary); border-radius: 2px;"></div>
+              </div>
+            </div>
+            <div style="font-size: 44px; line-height: 1;">🔥</div>
+          </div>
+        </div>
+
+        <div class="section-title">Suas lições</div>
+
+        <!-- Lessons -->
+        <div class="card" style="overflow: hidden;">
+          <div class="lesson-item" onclick="goTo('screen-lesson')">
+            <div class="lesson-icon unlocked">▶️</div>
+            <div class="lesson-info">
+              <div class="lesson-phase">FASE 1 · LIÇÃO 1</div>
+              <div class="lesson-title">Meeting someone new</div>
+              <div class="lesson-ctx">Você acabou de chegar numa festa</div>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--outline); margin: 0 16px;" class="divider-line"></div>
+          <div class="lesson-item" onclick="goTo('screen-lesson')">
+            <div class="lesson-icon unlocked">▶️</div>
+            <div class="lesson-info">
+              <div class="lesson-phase">FASE 1 · LIÇÃO 2</div>
+              <div class="lesson-title">Talking about yourself</div>
+              <div class="lesson-ctx">Alguém te pergunta quem você é</div>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--outline); margin: 0 16px;" class="divider-line"></div>
+          <div class="lesson-item" onclick="goTo('screen-lesson')">
+            <div class="lesson-icon unlocked">▶️</div>
+            <div class="lesson-info">
+              <div class="lesson-phase">FASE 1 · LIÇÃO 3</div>
+              <div class="lesson-title">How are you?</div>
+              <div class="lesson-ctx">Cumprimento casual com um colega</div>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--outline); margin: 0 16px;" class="divider-line"></div>
+          <div class="lesson-item" style="opacity: 0.6;">
+            <div class="lesson-icon locked">🔒</div>
+            <div class="lesson-info">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div class="lesson-phase">FASE 1 · LIÇÃO 4</div>
+                <span class="pro-badge">PRO</span>
+              </div>
+              <div class="lesson-title">Where are you from?</div>
+              <div class="lesson-ctx">Conversa inicial com estrangeiro</div>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--outline); margin: 0 16px;" class="divider-line"></div>
+          <div class="lesson-item" style="opacity: 0.6;">
+            <div class="lesson-icon locked">🔒</div>
+            <div class="lesson-info">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div class="lesson-phase">FASE 2 · LIÇÃO 1</div>
+                <span class="pro-badge">PRO</span>
+              </div>
+              <div class="lesson-title">There is something here</div>
+              <div class="lesson-ctx">Descrevendo o ambiente ao redor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ LESSON ═══════════════ -->
+    <div class="screen" id="screen-lesson">
+      <div class="top-bar">
+        <button class="icon-btn" onclick="goTo('screen-home')">←</button>
+        <div class="top-bar-title">He is coding</div>
+        <button class="icon-btn">⋮</button>
+      </div>
+      <div class="scroll">
+        <!-- Situation -->
+        <div class="card-secondary-container">
+          <div class="t-body-md" style="color: #00674E;">
+            📍 <strong>Situação:</strong> Você está descrevendo o que um amigo programador faz todos os dias
+          </div>
+        </div>
+
+        <!-- Phrase card -->
+        <div class="card">
+          <div class="lesson-card-pad">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div class="phrase-row" id="phrase-words" style="flex: 1; flex-wrap: wrap;">
+                <span class="word-chip" onclick="selectWord(this, 'He', 'Ele', 'pronoun', 'Sujeito da frase')">He</span>
+                <span class="word-chip" onclick="selectWord(this, 'is', 'está / é', 'verb', 'Verbo to be — 3ª pessoa')">is</span>
+                <span class="word-chip selected" onclick="selectWord(this, 'coding', 'programando', 'verb', 'Gerúndio — ação contínua')">coding</span>
+                <span class="word-chip" onclick="selectWord(this, 'every', 'todo', 'adjective', 'Indica frequência')">every</span>
+                <span class="word-chip" onclick="selectWord(this, 'single', 'único / cada', 'adjective', 'Reforça \'every\' para ênfase')">single</span>
+                <span class="word-chip" onclick="selectWord(this, 'day', 'dia', 'noun', 'Complemento de tempo')">day</span>
+              </div>
+              <button class="icon-btn" style="flex-shrink: 0;" onclick="alert('🔊 Reproduzindo áudio...')">🔊</button>
+            </div>
+
+            <div id="translation-area" style="margin-top: 12px; display: none;">
+              <div class="t-body-md muted">Ele está programando todos os dias.</div>
+            </div>
+
+            <button class="btn-text" onclick="toggleTranslation()">Ver tradução</button>
+
+            <div class="divider"></div>
+
+            <div class="form-row"><div class="form-label">Afirmativa</div><div class="form-text">He is coding every single day.</div></div>
+            <div class="form-row"><div class="form-label">Negativa</div><div class="form-text">He is not coding every single day.</div></div>
+            <div class="form-row"><div class="form-label">Interrogativa</div><div class="form-text">Is he coding every single day?</div></div>
+          </div>
+        </div>
+
+        <!-- Word detail card -->
+        <div class="card" id="word-detail-card" style="background: var(--primary-container);">
+          <div class="word-detail">
+            <div class="word-detail-top">
+              <div style="font-size: 22px; font-weight: 700; color: var(--primary);" id="detail-word">coding</div>
+              <span class="grammar-chip" id="detail-type">verb</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 15px; color: var(--primary); font-weight: 500;" id="detail-translation">programando</div>
+            <div style="margin-top: 4px; font-size: 13px; color: var(--primary); opacity: 0.7;" id="detail-role">Gerúndio — ação contínua</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-outline" onclick="goTo('screen-home')">Próxima frase</button>
+          <button class="btn-primary" style="flex: 1;" onclick="alert('🎯 Iniciando prática...')">Praticar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ CONVERSATION ═══════════════ -->
+    <div class="screen" id="screen-conversation" style="overflow: hidden;">
+      <div class="top-bar">
+        <button class="icon-btn" onclick="goTo('screen-home')">←</button>
+        <div class="top-bar-title">Conversar em inglês</div>
+      </div>
+
+      <div class="messages" id="chat-messages">
+        <div class="msg-row ai">
+          <div class="msg-col">
+            <div class="bubble ai">Hi! I'm your AI tutor 🤖 Let's practice together. How are you feeling today?</div>
+          </div>
+        </div>
+        <div class="msg-row user">
+          <div class="msg-col user">
+            <div class="bubble user">I am feel good, thank you!</div>
+          </div>
+        </div>
+        <div class="msg-row ai">
+          <div class="msg-col">
+            <div class="bubble ai">Great to hear that! I'm glad you're doing well.</div>
+            <div class="card-error-container correction">
+              <strong style="color: #C00;">✏️ Correção: "I am <u>feeling</u> good"</strong>
+              <span style="color: #900; opacity: 0.8;">Use o gerúndio (-ing) após o verbo to be para o presente contínuo.</span>
+            </div>
+          </div>
+        </div>
+        <div class="msg-row user">
+          <div class="msg-col user">
+            <div class="bubble user">I am feeling good! What we can talk about?</div>
+          </div>
+        </div>
+        <div class="msg-row ai">
+          <div class="msg-col">
+            <div class="bubble ai">We can talk about anything! How about telling me about your day? 😊</div>
+            <div class="card-error-container correction">
+              <strong style="color: #C00;">✏️ Correção: "<u>What can we</u> talk about?"</strong>
+              <span style="color: #900; opacity: 0.8;">Em perguntas, o auxiliar vem antes do sujeito.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <input class="chat-input" id="chat-input" type="text" placeholder="Escreva em inglês…" onkeydown="if(event.key==='Enter') sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+
+  </div><!-- /screen-wrap -->
+
+  <div class="home-bar"><div class="home-bar-line"></div></div>
+</div>
+
+<div class="nav-hint">Clique nos botões acima ou nos elementos da tela para navegar</div>
+
+<script>
+  // ── Theme ──
+  let isDark = false;
+  function setTheme(t) {
+    isDark = t === 'dark';
+    document.getElementById('phone').classList.toggle('dark', isDark);
+    document.querySelectorAll('.btn-ctrl').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    // Fix dividers
+    document.querySelectorAll('.divider-line').forEach(d => {
+      d.style.background = isDark ? '#3A3D4E' : '#C8CAD8';
+    });
+  }
+
+  // ── Navigation ──
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // Scroll chat to bottom when opening conversation
+    if (id === 'screen-conversation') {
+      setTimeout(() => {
+        const msgs = document.getElementById('chat-messages');
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 50);
+    }
+  }
+
+  // ── Manifesto ──
+  const manifestoPages = [
+    {
+      title: 'Você não aprendeu português decorando palavras.',
+      body: 'Aprendeu ouvindo frases inteiras, em situações reais, repetidas até virarem som natural.',
+    },
+    {
+      title: 'Os outros apps ensinam do jeito errado.',
+      body: 'Apple = maçã. Cat = gato. Palavras sem contexto, sem som, sem uso real. O cérebro não aprende assim.',
+    },
+    {
+      title: 'FaleInglês te ensina do jeito certo.',
+      body: 'Frases reais. Sons naturais. Situações do dia a dia. Gramática como consequência, não pré-requisito.',
+    },
+  ];
+  let manifestoIdx = 0;
+
+  function nextManifesto() {
+    manifestoIdx++;
+    if (manifestoIdx >= manifestoPages.length) {
+      goTo('screen-diagnostic');
+      manifestoIdx = 0;
+      updateManifesto();
+      return;
+    }
+    updateManifesto();
+  }
+
+  function updateManifesto() {
+    const page = manifestoPages[manifestoIdx];
+    document.getElementById('manifesto-title').textContent = page.title;
+    document.getElementById('manifesto-body-text').textContent = page.body;
+    document.getElementById('manifesto-btn').textContent =
+      manifestoIdx < manifestoPages.length - 1 ? 'Próximo' : 'Entendi, quero começar';
+    [0, 1, 2].forEach(i => {
+      const d = document.getElementById('dot-' + i);
+      d.className = 'dot ' + (i === manifestoIdx ? 'active' : 'inactive');
+    });
+  }
+
+  // ── Diagnostic ──
+  function selectDiag(el) {
+    el.closest('.diag-body').querySelectorAll('.diag-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── Goal ──
+  function selectGoal(el) {
+    document.querySelectorAll('.goal-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── Lesson word tap ──
+  function selectWord(el, word, translation, type, role) {
+    document.querySelectorAll('.word-chip').forEach(w => w.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('detail-word').textContent = word;
+    document.getElementById('detail-translation').textContent = translation;
+    document.getElementById('detail-type').textContent = type;
+    document.getElementById('detail-role').textContent = role;
+    document.getElementById('word-detail-card').style.display = '';
+  }
+
+  // ── Translation toggle ──
+  let showTranslation = false;
+  function toggleTranslation() {
+    showTranslation = !showTranslation;
+    const area = document.getElementById('translation-area');
+    area.style.display = showTranslation ? 'block' : 'none';
+    document.querySelector('[onclick="toggleTranslation()"]').textContent =
+      showTranslation ? 'Ocultar tradução' : 'Ver tradução';
+  }
+
+  // ── Chat ──
+  const aiReplies = [
+    { content: "That's great! Tell me more about that. 😊", correction: null },
+    { content: "Interesting! Can you describe it in more detail?", correction: { corrected: "I can describe it better.", explanation: "Use 'can' to express ability, not 'could' in present situations." } },
+    { content: "Wonderful! I love hearing about your experiences.", correction: null },
+    { content: "Perfect! Your English is improving a lot. Keep going! 🎉", correction: null },
+  ];
+  let replyIdx = 0;
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    const msgs = document.getElementById('chat-messages');
+
+    // User message
+    const userRow = document.createElement('div');
+    userRow.className = 'msg-row user';
+    userRow.innerHTML = `<div class="msg-col user"><div class="bubble user">${escapeHtml(text)}</div></div>`;
+    msgs.appendChild(userRow);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // AI reply with delay
+    setTimeout(() => {
+      const reply = aiReplies[replyIdx % aiReplies.length];
+      replyIdx++;
+      const aiRow = document.createElement('div');
+      aiRow.className = 'msg-row ai';
+      let correctionHtml = '';
+      if (reply.correction) {
+        correctionHtml = `<div class="card-error-container correction">
+          <strong style="color:#C00;">✏️ Correção: "${reply.correction.corrected}"</strong>
+          <span style="color:#900;opacity:0.8;">${reply.correction.explanation}</span>
+        </div>`;
+      }
+      aiRow.innerHTML = `<div class="msg-col"><div class="bubble ai">${reply.content}</div>${correctionHtml}</div>`;
+      msgs.appendChild(aiRow);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 900);
+  }
+
+  function escapeHtml(t) {
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Init
+  document.getElementById('word-detail-card').style.background = 'var(--primary-container)';
+</script>
+</body>
+</html>
