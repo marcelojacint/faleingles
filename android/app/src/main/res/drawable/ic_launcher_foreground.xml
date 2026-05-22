@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Ícone simplificado: bolha de fala representando o FaleInglês -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,24 C37.4,24 24,35.2 24,49 C24,57.2 28.4,64.4 35.4,69.2 L32,84 L48,75.6 C49.9,76 51.9,76.2 54,76.2 C70.6,76.2 84,65 84,51.2 C84,37.4 70.6,24 54,24 Z" />
+    <path
+        android:fillColor="#1A6BFF"
+        android:pathData="M40,47 L68,47 M40,55 L58,55"
+        android:strokeColor="#1A6BFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+</vector>
