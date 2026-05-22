@@ -13,7 +13,10 @@ import br.com.faleingles.presentation.onboarding.screen.GoalScreen
 import br.com.faleingles.presentation.onboarding.screen.ManifestoScreen
 import br.com.faleingles.presentation.onboarding.screen.WelcomeScreen
 import br.com.faleingles.presentation.practice.screen.PracticeScreen
+import br.com.faleingles.presentation.audio.screen.AudioScreen
 import br.com.faleingles.presentation.conversation.screen.ConversationScreen
+import br.com.faleingles.presentation.review.screen.ReviewScreen
+import br.com.faleingles.presentation.progress.screen.ProgressScreen
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -24,7 +27,10 @@ sealed interface Route {
     @Serializable data object Home : Route
     @Serializable data class Lesson(val lessonId: String) : Route
     @Serializable data class Practice(val lessonId: String) : Route
+    @Serializable data class Audio(val lessonId: String) : Route
     @Serializable data object Conversation : Route
+    @Serializable data object Review : Route
+    @Serializable data object Progress : Route
 }
 
 @Composable
@@ -65,7 +71,9 @@ fun FaleInglesNavHost(
         composable<Route.Home> {
             HomeScreen(
                 onLessonClick = { lessonId -> navController.navigate(Route.Lesson(lessonId)) },
-                onConversationClick = { navController.navigate(Route.Conversation) }
+                onConversationClick = { navController.navigate(Route.Conversation) },
+                onReviewClick = { navController.navigate(Route.Review) },
+                onProgressClick = { navController.navigate(Route.Progress) },
             )
         }
 
@@ -74,6 +82,7 @@ fun FaleInglesNavHost(
             LessonScreen(
                 lessonId = route.lessonId,
                 onPracticeClick = { navController.navigate(Route.Practice(route.lessonId)) },
+                onAudioClick = { navController.navigate(Route.Audio(route.lessonId)) },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -86,8 +95,28 @@ fun FaleInglesNavHost(
             )
         }
 
+        composable<Route.Audio> { backStackEntry ->
+            val route = backStackEntry.toRoute<Route.Audio>()
+            AudioScreen(
+                lessonId = route.lessonId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable<Route.Conversation> {
             ConversationScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<Route.Review> {
+            ReviewScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<Route.Progress> {
+            ProgressScreen(
                 onBack = { navController.popBackStack() }
             )
         }

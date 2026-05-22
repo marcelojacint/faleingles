@@ -27,6 +27,7 @@ import br.com.faleingles.presentation.lesson.viewmodel.LessonViewModel
 fun LessonScreen(
     lessonId: String,
     onPracticeClick: () -> Unit,
+    onAudioClick: () -> Unit = {},
     onBack: () -> Unit,
     viewModel: LessonViewModel = hiltViewModel(),
 ) {
@@ -82,23 +83,33 @@ fun LessonScreen(
                 }
             }
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     if (uiState.currentPhraseIndex < lesson.phrases.lastIndex) {
                         OutlinedButton(
                             onClick = { viewModel.nextPhrase() },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text("Próxima frase")
                         }
                     }
-                    Button(
-                        onClick = onPracticeClick,
-                        modifier = Modifier.weight(1f),
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        Text("Praticar")
+                        OutlinedButton(
+                            onClick = onAudioClick,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Icon(Icons.Filled.VolumeUp, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("Áudio")
+                        }
+                        Button(
+                            onClick = onPracticeClick,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text("Praticar")
+                        }
                     }
                 }
             }
